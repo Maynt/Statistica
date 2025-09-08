@@ -164,7 +164,7 @@ def _create_results_sheet(writer, results, sheet_name):
         image_data.seek(0)
     
         # Вставляем график в Excel
-        worksheet.insert_image("G2", "chart.png", {"image_data": image_data})
+        worksheet.insert_image("G2", "", {"image_data": image_data})
         workbook.close()
 
 #def _create_comparison_sheet(writer, structural, combined):
