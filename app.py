@@ -318,8 +318,8 @@ def main():
                         try:
                             excel_file = export_calculation_results_to_excel(
                                 room_data=st.session_state.calculation_results['room_data'],
-                                structural_results=structural_results,
-                                combined_results=combined_results,
+                                structural_results=st.session_state.structural_results,
+                                combined_results=st.session_state.combined_results,
                                 structural_materials=st.session_state.structural_materials,
                                 acoustic_materials=st.session_state.acoustic_materials
                             )
