@@ -67,8 +67,7 @@ def export_calculation_results_to_excel(
             # --------------------------
             if structural_results and combined_results:
                 _create_comparison_sheet(writer, structural_results, combined_results)
-
-            writer.save()
+                
             output.seek(0)
             return output
 
