@@ -4,7 +4,7 @@ import pandas as pd
 import math
 from models.room import Room
 from models.material import Material
-from data.materials_database import MATERIALS_DATABASE, get_materials_by_surface_type
+from materials import load_materials, load_surface_materials, get_materials_by_surface_type
 from utils.acoustic_calculations import calculate_structural_reverberation_time, calculate_combined_reverberation_time
 from utils.export_results import export_calculation_results_to_excel
 import matplotlib.pyplot as plt
@@ -136,7 +136,9 @@ def main():
             "Тип поверхности",
             ["Стены", "Потолок", "Пол", "Остекление", "Двери"]
         )
-        
+
+        MATERIALS_DATABASE = load_materials("materials.json")
+        SURFACE_MATERIALS = load_surface_materials("surface_materials.json")
         # Получаем материалы для выбранного типа поверхности
         available_materials = get_materials_by_surface_type(surface_type)
         if not available_materials:
