@@ -135,29 +135,37 @@ def _create_results_sheet(writer, results, sheet_name):
         structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
         combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
     
-        # Построение графика
-        fig, ax = plt.subplots(figsize=(8,5))
-        ax.plot(frequencies, min_times, 'g--', marker='o', label="Минимальное время")
-        ax.plot(frequencies, max_times, 'g-.', marker='o', label="Максимальное время")
-        ax.plot(frequencies, structural_times, 'r-o', label="Исходное время (ОК)")
-        if combined_times:
-            ax.plot(frequencies, combined_times, 'b-o', label="Итоговое время (с АК)")
-    
-        ax.set_xlabel("Частота (Гц)")
-        ax.set_ylabel("Время реверберации (с)")
-        ax.set_title("Время реверберации по частотам")
-        ax.grid(True)
-        ax.legend()
-    
-        # Вставка графика в Excel через BytesIO
-        from io import BytesIO
-        img_data = BytesIO()
-        fig.savefig(img_data, format='png')
-        plt.close(fig)
-        img_data.seek(0)
-    
-        worksheet.insert_image('B2', 'reverberation_chart.png', {'image_data': img_data, 'x_scale': 1, 'y_scale':1})
+        for row, f in enumerate(frequencies, start=1):
+        worksheet.write(row, 0, f)
+        worksheet.write(row, 1, min_times[row-1])
+        worksheet.write(row, 2, max_times[row-1])
+        worksheet.write(row, 3, structural_times[row-1])
+        worksheet.write(row, 4, combined_times[row-1])
 
+        # === Построение графика matplotlib ===
+        plt.figure(figsize=(8, 5))
+        plt.plot(frequencies, structural_times, label="Ограждающие конструкции", marker="o")
+        if combined_results:
+            plt.plot(frequencies, combined_times, label="С учетом акустики", marker="o")
+        plt.plot(frequencies, min_times, label="Мин. время", linestyle="--")
+        plt.plot(frequencies, max_times, label="Макс. время", linestyle="--")
+    
+        plt.title(f"Время реверберации — {room.name}")
+        plt.xlabel("Частота, Гц")
+        plt.ylabel("Время реверберации, с")
+        plt.legend()
+        plt.grid(True)
+        plt.xscale("log", base=2)
+    
+        # Сохраняем картинку в память
+        image_data = io.BytesIO()
+        plt.savefig(image_data, format="png", dpi=150, bbox_inches="tight")
+        plt.close()
+        image_data.seek(0)
+    
+        # Вставляем график в Excel
+        worksheet.insert_image("G2", "chart.png", {"image_data": image_data})
+        workbook.close()
 
 #def _create_comparison_sheet(writer, structural, combined):
     """
