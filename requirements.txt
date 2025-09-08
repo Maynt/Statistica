@@ -1,4 +1,21 @@
-streamlit==1.29.0
-pandas==2.1.0
-numpy==1.26.0
-xlsxwriter==3.1.3
+# Python
+pycache/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+.env
+venv/
+env/
+*.env
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Streamlit
+.streamlit/
+
+# IDEs
+.vscode/
+.idea/
