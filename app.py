@@ -4,7 +4,7 @@ import pandas as pd
 import math
 from models.room import Room
 from models.material import Material
-from materials import load_materials, load_surface_materials, get_materials_by_surface_type
+from data.materials_database import load_materials, load_surface_materials, get_materials_by_surface_type
 from utils.acoustic_calculations import calculate_structural_reverberation_time, calculate_combined_reverberation_time
 from utils.export_results import export_calculation_results_to_excel
 import matplotlib.pyplot as plt
