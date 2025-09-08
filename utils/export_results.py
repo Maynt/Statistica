@@ -69,7 +69,7 @@ def export_calculation_results_to_excel(
              4. Сравнение
              --------------------------
             if structural_results and combined_results:
-               _create_chart_data_sheet(writer, room_data, structural_results, combined_results)
+                _create_chart_data_sheet(writer, room_data, structural_results, combined_results)
              
             output.seek(0)
             return output
