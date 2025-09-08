@@ -150,7 +150,7 @@ def _create_results_sheet(writer, results, sheet_name):
         plt.close(fig)
         img_data.seek(0)
     
-        worksheet.insert_image('B2', 'reverberation_chart.png', {'image_data': img_data, 'x_scale':
+        worksheet.insert_image('B2', 'reverberation_chart.png', {'image_data': img_data, 'x_scale': 1, 'y_scale':1})
 
 
 #def _create_comparison_sheet(writer, structural, combined):
