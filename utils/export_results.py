@@ -62,12 +62,12 @@ def export_calculation_results_to_excel(
             if combined_results:
                 _create_results_sheet(writer, combined_results, 'Расчет с АК')
 
-            # --------------------------
+          """  # --------------------------
             # 4. Сравнение
             # --------------------------
             if structural_results and combined_results:
                 _create_comparison_sheet(writer, structural_results, combined_results)
-                
+          """      
             output.seek(0)
             return output
 
