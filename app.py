@@ -140,7 +140,7 @@ def main():
         MATERIALS_DATABASE = load_materials("data/materials.json")
         SURFACE_MATERIALS = load_surface_materials("data/surface_materials.json")
         # Получаем материалы для выбранного типа поверхности
-        available_materials = get_materials_by_surface_type(surface_type)
+        available_materials = get_materials_by_surface_type(SURFACE_MATERIALS, surface_type)
         if not available_materials:
             available_materials = list(MATERIALS_DATABASE.keys())
         
