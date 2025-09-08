@@ -140,5 +140,5 @@ def _create_chart_data_sheet(writer, room_data, structural_results, combined_res
         rows.append([f, min_times[i], max_times[i], structural_times[i], combined_times[i]])
     
     df = pd.DataFrame(rows)
-     df.to_excel(writer, sheet_name="Графики", index=False, header=False)
+    df.to_excel(writer, sheet_name="Графики", index=False, header=False)
 
