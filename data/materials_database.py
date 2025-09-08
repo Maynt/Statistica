@@ -6,13 +6,26 @@ import json
 
 # Загрузка материалов
 def load_materials(file_path="materials.json") -> dict:
+    """
+    Загружает базу материалов из JSON и преобразует ключи частот в int
+    """
     with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    
+    # Преобразуем ключи частот из строк в int
+    for material, freqs in data.items():
+        data[material] = {int(freq): coeff for freq, coeff in freqs.items()}
+    
+    return data
 
 # Загрузка словаря surface_materials
 def load_surface_materials(file_path="surface_materials.json") -> dict:
+    """
+    Загружает словарь surface_materials из JSON
+    """
     with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    return data
 
 # Получить список всех материалов
 def get_material_names(materials: dict) -> list:
