@@ -310,35 +310,37 @@ def main():
                 st.success("✅ Расчет выполнен успешно!")
                 
                 # Export button
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.subheader("📊 Результаты расчета")
-                with col2:
-                    if st.button("📥 Экспорт в Excel", type="secondary"):
-                        try:
-                            excel_file = export_calculation_results_to_excel(
-                                room_data=st.session_state.calculation_results['room_data'],
-                                structural_results=st.session_state.current.structural_results,
-                                combined_results=st.session_state.current.combined_results,
-                                structural_materials=st.session_state.structural_materials,
-                                acoustic_materials=st.session_state.acoustic_materials
-                            )
-                            
-                            # Create a clean filename
-                            clean_filename = room_name.replace(' ', '_').replace('/', '_').replace('\\', '_')
-                            if not clean_filename:
-                                clean_filename = "Расчет"
-                            
-                            st.download_button(
-                                label="💾 Скачать отчет",
-                                data=excel_file.getvalue(),
-                                file_name=f"Акустический_расчет_{clean_filename}.xlsx",
-                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                            )
-                            st.success("✅ Excel файл готов к скачиванию!")
-                        except Exception as e:
-                            st.error(f"Ошибка при создании файла: {str(e)}")
-                            st.error(f"Детали ошибки: {type(e).__name__}")
+                if 'calculation_results' in st.session_state:
+                    col1, col2 = st.columns([3, 1])
+                    with col1:
+                        st.subheader("📊 Результаты расчета")
+                    with col2:
+                        if st.button("📥 Экспорт в Excel", type="secondary"):
+                            try:
+                                excel_file = export_calculation_results_to_excel(
+                                    room_data=st.session_state.calculation_results['room_data'],
+                                    structural_results=st.session_state.structural_results.get('structural_results'),
+                                    combined_results=st.session_state.current.combined_results('combined_results'),
+                                    structural_materials=st.session_state.structural_materials('structural_materials'),
+                                    acoustic_materials=st.session_state.acoustic_materials('acoustic_results')
+                                )
+                                
+                                # Create a clean filename
+                                room_name=st.session_state.calculation_results['room_data'].get('name','Расчет')
+                                clean_filename = room_name.replace(' ', '_').replace('/', '_').replace('\\', '_')
+                                if not clean_filename:
+                                    clean_filename = "Расчет"
+                                
+                                st.download_button(
+                                    label="💾 Скачать отчет",
+                                    data=excel_file.getvalue(),
+                                    file_name=f"Акустический_расчет_{clean_filename}.xlsx",
+                                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                )
+                                st.success("✅ Excel файл готов к скачиванию!")
+                            except Exception as e:
+                                st.error(f"Ошибка при создании файла: {str(e)}")
+                                st.error(f"Детали ошибки: {type(e).__name__}")
                 
                 # Critical frequency and basic metrics
                 col1, col2, col3 = st.columns(3)
