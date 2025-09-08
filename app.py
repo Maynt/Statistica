@@ -7,7 +7,7 @@ from models.material import Material
 from data.materials_database import MATERIALS_DATABASE, get_materials_by_surface_type
 from utils.acoustic_calculations import calculate_structural_reverberation_time, calculate_combined_reverberation_time
 from utils.export_results import export_calculation_results_to_excel
-
+import matplotlib.pyplot as plt
 def main():
     st.set_page_config(
         page_title="Расчет времени реверберации",
@@ -308,6 +308,31 @@ def main():
                 
                 # Display results
                 st.success("✅ Расчет выполнен успешно!")
+
+                #Графики
+                # Частоты
+                frequencies = [125, 250, 500, 1000, 2000, 4000]
+                
+                # Времена реверберации
+                min_times = [structural_results['min_reverberation'][f] for f in frequencies]  # нужно добавить в calculate_structural
+                max_times = [structural_results['max_reverberation'][f] for f in frequencies]
+                structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
+                combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
+                
+                plt.figure(figsize=(10,5))
+                plt.plot(frequencies, min_times, 'g--', marker='o', label="Минимальное время")
+                plt.plot(frequencies, max_times, 'g-.', marker='o', label="Максимальное время")
+                plt.plot(frequencies, structural_times, 'r-o', label="Исходное время (ОК)")
+                if combined_times:
+                    plt.plot(frequencies, combined_times, 'b-o', label="Итоговое время (с АК)")
+                
+                plt.xlabel("Частота (Гц)")
+                plt.ylabel("Время реверберации (с)")
+                plt.title("Время реверберации по частотам")
+                plt.grid(True)
+                plt.legend()
+                st.pyplot(plt)
+
                 
                 # Экспорт Excel
                 if 'calculation_results' in st.session_state:
