@@ -328,7 +328,7 @@ def main():
                             use_container_width=True
                         )
                     except Exception as e:
-                        st.error(f"Ошибка при создании файла: {type(e).name} — {str(e)}")
+                        st.error(f"Ошибка при создании файла: {type(e)._name_} — {str(e)}")
                 
                 # Critical frequency and basic metrics
                 col1, col2, col3 = st.columns(3)
