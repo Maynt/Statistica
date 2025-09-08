@@ -6,7 +6,7 @@ from models.room import Room
 from models.material import Material
 from data.materials_database import MATERIALS_DATABASE, get_materials_by_surface_type
 from utils.acoustic_calculations import calculate_structural_reverberation_time, calculate_combined_reverberation_time
-#from utils.export_results import export_calculation_results_to_excel
+from utils.export_results import export_calculation_results_to_excel
 
 def main():
     st.set_page_config(
