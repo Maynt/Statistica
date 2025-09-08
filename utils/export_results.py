@@ -112,7 +112,7 @@ def _create_results_sheet(writer, results, sheet_name):
     df = pd.DataFrame(rows)
     df.to_excel(writer, sheet_name=sheet_name, index=False)
     
-    def _create_chart_data_sheet(writer, room_data, structural_results, combined_results):
+def _create_chart_data_sheet(writer, room_data, structural_results, combined_results):
         """
         Создание листа с данными для построения графиков времени реверберации.
         """
