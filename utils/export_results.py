@@ -112,10 +112,10 @@ def _create_results_sheet(writer, results, sheet_name):
     df.to_excel(writer, sheet_name=sheet_name, index=False)
 
 
-def _create_comparison_sheet(writer, structural, combined):
+#def _create_comparison_sheet(writer, structural, combined):
     """
     Создание листа с сравнением результатов.
-    """
+    
     frequencies = [125, 250, 500, 1000, 2000, 4000]
     rows = []
 
@@ -141,3 +141,4 @@ def _create_comparison_sheet(writer, structural, combined):
 
     df = pd.DataFrame(rows)
     df.to_excel(writer, sheet_name='Сравнение', index=False)
+    """
