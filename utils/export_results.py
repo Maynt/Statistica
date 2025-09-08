@@ -136,11 +136,11 @@ def _create_results_sheet(writer, results, sheet_name):
         combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
     
         for row, f in enumerate(frequencies, start=1):
-        worksheet.write(row, 0, f)
-        worksheet.write(row, 1, min_times[row-1])
-        worksheet.write(row, 2, max_times[row-1])
-        worksheet.write(row, 3, structural_times[row-1])
-        worksheet.write(row, 4, combined_times[row-1])
+            worksheet.write(row, 0, f)
+            worksheet.write(row, 1, min_times[row-1])
+            worksheet.write(row, 2, max_times[row-1])
+            worksheet.write(row, 3, structural_times[row-1])
+            worksheet.write(row, 4, combined_times[row-1])
 
         # === Построение графика matplotlib ===
         plt.figure(figsize=(8, 5))
