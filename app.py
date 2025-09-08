@@ -509,29 +509,29 @@ def _display_calculation_results(results, title):
     results_df = pd.DataFrame(reverberation_data)
     st.dataframe(results_df, use_container_width=True, hide_index=True)
 
-def _display_comparison_results(structural_results, combined_results):
-    """Отображение сравнения результатов"""
-    st.subheader("📊 Сравнение результатов")
+#def _display_comparison_results(structural_results, combined_results):
+#    """Отображение сравнения результатов"""
+ #   st.subheader("📊 Сравнение результатов")
     
-    frequencies = [125, 250, 500, 1000, 2000, 4000]
-    comparison_data = []
+  #  frequencies = [125, 250, 500, 1000, 2000, 4000]
+  #  comparison_data = []
     
-    for freq in frequencies:
-        structural_time = structural_results['reverberation_times'][freq]
-        combined_time = combined_results['reverberation_times'][freq]
-        difference = structural_time - combined_time
-        percentage = (difference / structural_time) * 100 if structural_time > 0 else 0
+  #  for freq in frequencies:
+     #   structural_time = structural_results['reverberation_times'][freq]
+   #     combined_time = combined_results['reverberation_times'][freq]
+    #    difference = structural_time - combined_time
+      #  percentage = (difference / structural_time) * 100 if structural_time > 0 else 0
         
-        comparison_data.append({
-            "Частота (Гц)": freq,
-            "Время ОК (с)": f"{structural_time:.3f}",
-            "Время с АК (с)": f"{combined_time:.3f}",
-            "Разность (с)": f"{difference:.3f}",
-            "Снижение (%)": f"{percentage:.1f}%"
-        })
+     #   comparison_data.append({
+      #      "Частота (Гц)": freq,
+    #       "Время ОК (с)": f"{structural_time:.3f}",
+     #       "Время с АК (с)": f"{combined_time:.3f}",
+      #      "Разность (с)": f"{difference:.3f}",
+      #      "Снижение (%)": f"{percentage:.1f}%"
+      #  })
     
-    comparison_df = pd.DataFrame(comparison_data)
-    st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+   # comparison_df = pd.DataFrame(comparison_data)
+   # st.dataframe(comparison_df, use_container_width=True, hide_index=True)
     
     # Эффективность акустических материалов
     avg_reduction = sum([
