@@ -1,5 +1,6 @@
 import pandas as pd
 import io
+import matplotlib.pyplot as plt
 
 def export_calculation_results_to_excel(
     room_data,
@@ -110,6 +111,46 @@ def _create_results_sheet(writer, results, sheet_name):
 
     df = pd.DataFrame(rows)
     df.to_excel(writer, sheet_name=sheet_name, index=False)
+    
+    def _insert_reverberation_chart(workbook, worksheet, structural_results, combined_results):
+        """
+        Строит график времени реверберации и вставляет в Excel.
+        4 линии:
+        1) Минимальное время (зеленая)
+        2) Максимальное время (зеленая)
+        3) Исходное время (ОК, красная)
+        4) Итоговое с АК (синяя)
+        """
+        frequencies = [125, 250, 500, 1000, 2000, 4000]
+    
+        # Берем данные
+        min_times = [structural_results['min_reverberation'].get(f, 0) for f in frequencies]
+        max_times = [structural_results['max_reverberation'].get(f, 0) for f in frequencies]
+        structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
+        combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
+    
+        # Построение графика
+        fig, ax = plt.subplots(figsize=(8,5))
+        ax.plot(frequencies, min_times, 'g--', marker='o', label="Минимальное время")
+        ax.plot(frequencies, max_times, 'g-.', marker='o', label="Максимальное время")
+        ax.plot(frequencies, structural_times, 'r-o', label="Исходное время (ОК)")
+        if combined_times:
+            ax.plot(frequencies, combined_times, 'b-o', label="Итоговое время (с АК)")
+    
+        ax.set_xlabel("Частота (Гц)")
+        ax.set_ylabel("Время реверберации (с)")
+        ax.set_title("Время реверберации по частотам")
+        ax.grid(True)
+        ax.legend()
+    
+        # Вставка графика в Excel через BytesIO
+        from io import BytesIO
+        img_data = BytesIO()
+        fig.savefig(img_data, format='png')
+        plt.close(fig)
+        img_data.seek(0)
+    
+        worksheet.insert_image('B2', 'reverberation_chart.png', {'image_data': img_data, 'x_scale':
 
 
 #def _create_comparison_sheet(writer, structural, combined):
