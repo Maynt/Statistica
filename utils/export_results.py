@@ -2,7 +2,7 @@ import pandas as pd
 import io
 import matplotlib.pyplot as plt
 from data.reverberation_standarts import REVERBERATION_STANDARDS
-from room import Room
+from models.room import Room
 
 def export_calculation_results_to_excel(
     room_data,
