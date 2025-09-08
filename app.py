@@ -137,8 +137,8 @@ def main():
             ["Стены", "Потолок", "Пол", "Остекление", "Двери"]
         )
 
-        MATERIALS_DATABASE = load_materials("materials.json")
-        SURFACE_MATERIALS = load_surface_materials("surface_materials.json")
+        MATERIALS_DATABASE = load_materials("data/materials.json")
+        SURFACE_MATERIALS = load_surface_materials("data/surface_materials.json")
         # Получаем материалы для выбранного типа поверхности
         available_materials = get_materials_by_surface_type(surface_type)
         if not available_materials:
