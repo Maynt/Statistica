@@ -1,6 +1,5 @@
 import pandas as pd
 import io
-import matplotlib.pyplot as plt
 from data.reverberation_standarts import REVERBERATION_STANDARDS
 from models.room import Room
 
