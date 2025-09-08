@@ -4,10 +4,10 @@ import pandas as pd
 import math
 from models.room import Room
 from models.material import Material
-from data.materials_database import MATERIALS_DATABASE, get_materials_by_surface_type
+from data.materials_database import load_materials, load_surface_materials, get_materials_by_surface_type
 from utils.acoustic_calculations import calculate_structural_reverberation_time, calculate_combined_reverberation_time
 from utils.export_results import export_calculation_results_to_excel
-
+import matplotlib.pyplot as plt
 def main():
     st.set_page_config(
         page_title="Расчет времени реверберации",
@@ -136,9 +136,11 @@ def main():
             "Тип поверхности",
             ["Стены", "Потолок", "Пол", "Остекление", "Двери"]
         )
-        
+
+        MATERIALS_DATABASE = load_materials("data/materials.json")
+        SURFACE_MATERIALS = load_surface_materials("data/surface_materials.json")
         # Получаем материалы для выбранного типа поверхности
-        available_materials = get_materials_by_surface_type(surface_type)
+        available_materials = get_materials_by_surface_type(SURFACE_MATERIALS, surface_type)
         if not available_materials:
             available_materials = list(MATERIALS_DATABASE.keys())
         
@@ -308,37 +310,52 @@ def main():
                 
                 # Display results
                 st.success("✅ Расчет выполнен успешно!")
+
+                #Графики
+                # Частоты
+                frequencies = [125, 250, 500, 1000, 2000, 4000]
                 
-                # Export button
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.subheader("📊 Результаты расчета")
-                with col2:
-                    if st.button("📥 Экспорт в Excel", type="secondary"):
-                        try:
-                            excel_file = export_calculation_results_to_excel(
-                                room_data=st.session_state.calculation_results['room_data'],
-                                structural_results=structural_results,
-                                combined_results=combined_results,
-                                structural_materials=st.session_state.structural_materials,
-                                acoustic_materials=st.session_state.acoustic_materials
-                            )
-                            
-                            # Create a clean filename
-                            clean_filename = room_name.replace(' ', '_').replace('/', '_').replace('\\', '_')
-                            if not clean_filename:
-                                clean_filename = "Расчет"
-                            
-                            st.download_button(
-                                label="💾 Скачать отчет",
-                                data=excel_file.getvalue(),
-                                file_name=f"Акустический_расчет_{clean_filename}.xlsx",
-                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                            )
-                            st.success("✅ Excel файл готов к скачиванию!")
-                        except Exception as e:
-                            st.error(f"Ошибка при создании файла: {str(e)}")
-                            st.error(f"Детали ошибки: {type(e).__name__}")
+                # Времена реверберации
+                #min_times = [structural_results['min_reverberation'][f] for f in frequencies]  # нужно добавить в calculate_structural
+               # max_times = [structural_results['max_reverberation'][f] for f in frequencies]
+                #structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
+               # combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
+                
+               # plt.figure(figsize=(10,5))
+               # plt.plot(frequencies, min_times, 'g--', marker='o', label="Минимальное время")
+               # plt.plot(frequencies, max_times, 'g-.', marker='o', label="Максимальное время")
+               # plt.plot(frequencies, structural_times, 'r-o', label="Исходное время (ОК)")
+               # if combined_times:
+               #     plt.plot(frequencies, combined_times, 'b-o', label="Итоговое время (с АК)")
+                
+              #  plt.xlabel("Частота (Гц)")
+               # plt.ylabel("Время реверберации (с)")
+               # plt.title("Время реверберации по частотам")
+               # plt.grid(True)
+              #  plt.legend()
+             #   st.pyplot(plt)
+
+                
+                # Экспорт Excel
+                if 'calculation_results' in st.session_state:
+                    try:
+                        excel_file = export_calculation_results_to_excel(
+                            room_data=st.session_state.calculation_results['room_data'],
+                            structural_results=structural_results,
+                            combined_results=combined_results,
+                            structural_materials=st.session_state.calculation_results['structural_materials'],
+                            acoustic_materials=st.session_state.calculation_results['acoustic_materials']
+                        )
+                        clean_filename = room_name.replace(' ', '_').replace('/', '_').replace('\\', '_') or "Расчет"
+                        st.download_button(
+                            label="💾 Скачать Excel-отчет",
+                            data=excel_file.getvalue(),
+                            file_name=f"Акустический_расчет_{clean_filename}.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            use_container_width=True
+                        )
+                    except Exception as e:
+                        st.error(f"Ошибка при создании файла: {type(e).__name__} — {str(e)}")
                 
                 # Critical frequency and basic metrics
                 col1, col2, col3 = st.columns(3)
@@ -363,7 +380,7 @@ def main():
                 
                 # Results display tabs
                 if combined_results:
-                    tab1, tab2, tab3 = st.tabs(["🏢 Ограждающие конструкции", "🎧 С акустическими материалами", "📊 Сравнение"])
+                    tab1, tab2 = st.tabs(["🏢 Ограждающие конструкции", "🎧 С акустическими материалами"])
                     
                     with tab1:
                         _display_calculation_results(structural_results, "⏱️ Время реверберации (только ОК)")
@@ -371,8 +388,8 @@ def main():
                     with tab2:
                         _display_calculation_results(combined_results, "⏱️ Время реверберации (с АК)")
                     
-                    with tab3:
-                        _display_comparison_results(structural_results, combined_results)
+                   # with tab3:
+                      #  _display_comparison_results(structural_results, combined_results)
                 else:
                     _display_calculation_results(structural_results, "⏱️ Время реверберации по частотам")
                 
@@ -519,47 +536,47 @@ def _display_calculation_results(results, title):
     results_df = pd.DataFrame(reverberation_data)
     st.dataframe(results_df, use_container_width=True, hide_index=True)
 
-def _display_comparison_results(structural_results, combined_results):
-    """Отображение сравнения результатов"""
-    st.subheader("📊 Сравнение результатов")
+#def _display_comparison_results(structural_results, combined_results):
+#    """Отображение сравнения результатов"""
+ #   st.subheader("📊 Сравнение результатов")
     
-    frequencies = [125, 250, 500, 1000, 2000, 4000]
-    comparison_data = []
+  #  frequencies = [125, 250, 500, 1000, 2000, 4000]
+  #  comparison_data = []
     
-    for freq in frequencies:
-        structural_time = structural_results['reverberation_times'][freq]
-        combined_time = combined_results['reverberation_times'][freq]
-        difference = structural_time - combined_time
-        percentage = (difference / structural_time) * 100 if structural_time > 0 else 0
+  #  for freq in frequencies:
+     #   structural_time = structural_results['reverberation_times'][freq]
+   #     combined_time = combined_results['reverberation_times'][freq]
+    #    difference = structural_time - combined_time
+      #  percentage = (difference / structural_time) * 100 if structural_time > 0 else 0
         
-        comparison_data.append({
-            "Частота (Гц)": freq,
-            "Время ОК (с)": f"{structural_time:.3f}",
-            "Время с АК (с)": f"{combined_time:.3f}",
-            "Разность (с)": f"{difference:.3f}",
-            "Снижение (%)": f"{percentage:.1f}%"
-        })
+     #   comparison_data.append({
+      #      "Частота (Гц)": freq,
+    #       "Время ОК (с)": f"{structural_time:.3f}",
+     #       "Время с АК (с)": f"{combined_time:.3f}",
+      #      "Разность (с)": f"{difference:.3f}",
+      #      "Снижение (%)": f"{percentage:.1f}%"
+      #  })
     
-    comparison_df = pd.DataFrame(comparison_data)
-    st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+   # comparison_df = pd.DataFrame(comparison_data)
+   # st.dataframe(comparison_df, use_container_width=True, hide_index=True)
     
     # Эффективность акустических материалов
-    avg_reduction = sum([
-        (structural_results['reverberation_times'][freq] - combined_results['reverberation_times'][freq]) / 
-        structural_results['reverberation_times'][freq] * 100 
-        for freq in frequencies
-    ]) / len(frequencies)
+ #   avg_reduction = sum([
+ #       (structural_results['reverberation_times'][freq] - combined_results['reverberation_times'][freq]) / 
+ #       structural_results['reverberation_times'][freq] * 100 
+  #      for freq in frequencies
+ #   ]) / len(frequencies)
     
-    if avg_reduction > 0:
-        st.success(f"✅ Среднее снижение времени реверберации: {avg_reduction:.1f}%")
-        if avg_reduction > 20:
-            st.info("🎯 Отличная эффективность акустических материалов!")
-        elif avg_reduction > 10:
-            st.info("👍 Хорошая эффективность акустических материалов")
-        else:
-            st.warning("⚠️ Низкая эффективность акустических материалов")
-    else:
-        st.warning("⚠️ Акустические материалы не показывают эффективности")
+  #  if avg_reduction > 0:
+   #     st.success(f"✅ Среднее снижение времени реверберации: {avg_reduction:.1f}%")
+   #     if avg_reduction > 20:
+  #          st.info("🎯 Отличная эффективность акустических материалов!")
+   #     elif avg_reduction > 10:
+   #         st.info("👍 Хорошая эффективность акустических материалов")
+   #     else:
+   #         st.warning("⚠️ Низкая эффективность акустических материалов")
+  #  else:
+    #    st.warning("⚠️ Акустические материалы не показывают эффективности")
 
 if __name__ == "__main__":
     main()
