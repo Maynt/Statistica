@@ -65,11 +65,11 @@ def export_calculation_results_to_excel(
             if combined_results:
                 _create_results_sheet(writer, combined_results, 'Расчет с АК')
 
-            # --------------------------
-            # 4. Сравнение
-            # --------------------------
-            #if structural_results and combined_results:
-            #    _create_comparison_sheet(writer, structural_results, combined_results)
+             --------------------------
+             4. Сравнение
+             --------------------------
+            if structural_results and combined_results:
+               _create_chart_data_sheet(writer, room_data, structural_results, combined_results)
              
             output.seek(0)
             return output
@@ -114,58 +114,34 @@ def _create_results_sheet(writer, results, sheet_name):
     df = pd.DataFrame(rows)
     df.to_excel(writer, sheet_name=sheet_name, index=False)
     
-    def _insert_reverberation_chart(workbook, worksheet, structural_results, combined_results):
+    def _create_chart_data_sheet(writer, room_data, structural_results, combined_results):
         """
-        Строит график времени реверберации и вставляет в Excel.
-        4 линии:
-        1) Минимальное время (зеленая)
-        2) Максимальное время (зеленая)
-        3) Исходное время (ОК, красная)
-        4) Итоговое с АК (синяя)
+        Создание листа с данными для построения графиков времени реверберации.
         """
+    
         frequencies = [125, 250, 500, 1000, 2000, 4000]
-        
-        purpose=room.purpose
-
-        standarts = REVERBERATION_STANDARDS.get(purpose,{"min":{}, "max":{}})
+        purpose = room_data.get("purpose", "")
     
-        # Берем данные
-        min_times = [standarts['min'].get(f, 0) for f in frequencies]
-        max_times = [standarts['max'].get(f, 0) for f in frequencies]
-        structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
-        combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
+        min_times = []
+        max_times = []
+        structural_times = []
+        combined_times = []
     
-        for row, f in enumerate(frequencies, start=1):
-            worksheet.write(row, 0, f)
-            worksheet.write(row, 1, min_times[row-1])
-            worksheet.write(row, 2, max_times[row-1])
-            worksheet.write(row, 3, structural_times[row-1])
-            worksheet.write(row, 4, combined_times[row-1])
-
-        # === Построение графика matplotlib ===
-        plt.figure(figsize=(8, 5))
-        plt.plot(frequencies, structural_times, label="Ограждающие конструкции", marker="o")
-        if combined_results:
-            plt.plot(frequencies, combined_times, label="С учетом акустики", marker="o")
-        plt.plot(frequencies, min_times, label="Мин. время", linestyle="--")
-        plt.plot(frequencies, max_times, label="Макс. время", linestyle="--")
+        for f in frequencies:
+            min_times.append(REVERBERATION_STANDARDS.get(purpose, {}).get("min", {}).get(f, None))
+            max_times.append(REVERBERATION_STANDARDS.get(purpose, {}).get("max", {}).get(f, None))
+            structural_times.append(structural_results['reverberation_times'].get(f, None))
+            if combined_results:
+                combined_times.append(combined_results['reverberation_times'].get(f, None))
+            else:
+                combined_times.append(None)
     
-        plt.title(f"Время реверберации — {room.name}")
-        plt.xlabel("Частота, Гц")
-        plt.ylabel("Время реверберации, с")
-        plt.legend()
-        plt.grid(True)
-        plt.xscale("log", base=2)
+        rows = [["Частота (Гц)", "Мин. время", "Макс. время", "Исходное время (ОК)", "Итоговое время (с АК)"]]
+        for i, f in enumerate(frequencies):
+            rows.append([f, min_times[i], max_times[i], structural_times[i], combined_times[i]])
     
-        # Сохраняем картинку в память
-        image_data = io.BytesIO()
-        plt.savefig(image_data, format="png", dpi=150, bbox_inches="tight")
-        plt.close()
-        image_data.seek(0)
-    
-        # Вставляем график в Excel
-        worksheet.insert_image("G2", "", {"image_data": image_data})
-
+        df = pd.DataFrame(rows)
+        df.to_excel(writer, sheet_name="Графики", index=False, header=False)
 #def _create_comparison_sheet(writer, structural, combined):
     """
     Создание листа с сравнением результатов.
