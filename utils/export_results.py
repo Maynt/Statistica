@@ -1,6 +1,8 @@
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
+from data.reverberation_standarts import REVERBERATION_STANDARDS
+from room import Room
 
 def export_calculation_results_to_excel(
     room_data,
@@ -122,10 +124,14 @@ def _create_results_sheet(writer, results, sheet_name):
         4) Итоговое с АК (синяя)
         """
         frequencies = [125, 250, 500, 1000, 2000, 4000]
+        
+        purpose=room.purpose
+
+        standarts = REVERBERATION_STANDARDS.get(purpose,{"min":{}, "max":{}})
     
         # Берем данные
-        min_times = [structural_results['min_reverberation'].get(f, 0) for f in frequencies]
-        max_times = [structural_results['max_reverberation'].get(f, 0) for f in frequencies]
+        min_times = [standarts['min'].get(f, 0) for f in frequencies]
+        max_times = [standarts['max'].get(f, 0) for f in frequencies]
         structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
         combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
     
