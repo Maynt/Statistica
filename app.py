@@ -361,8 +361,8 @@ def main():
                     with tab2:
                         _display_calculation_results(combined_results, "⏱️ Время реверберации (с АК)")
                     
-                    with tab3:
-                        _display_comparison_results(structural_results, combined_results)
+                   # with tab3:
+                      #  _display_comparison_results(structural_results, combined_results)
                 else:
                     _display_calculation_results(structural_results, "⏱️ Время реверберации по частотам")
                 
