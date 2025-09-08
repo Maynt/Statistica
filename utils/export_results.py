@@ -113,32 +113,32 @@ def _create_results_sheet(writer, results, sheet_name):
     df.to_excel(writer, sheet_name=sheet_name, index=False)
     
 def _create_chart_data_sheet(writer, room_data, structural_results, combined_results):
-            """
-        Создание листа с данными для построения графиков времени реверберации.
-        """
-        from data.reverberation_standarts import REVERBERATION_STANDARDS
+    """
+    Создание листа с данными для построения графиков времени реверберации.
+    """
+    from data.reverberation_standarts import REVERBERATION_STANDARDS
         
-        frequencies = [125, 250, 500, 1000, 2000, 4000]
-        purpose = room_data.get("purpose", "")
+    frequencies = [125, 250, 500, 1000, 2000, 4000]
+    purpose = room_data.get("purpose", "")
     
-        min_times = []
-        max_times = []
-        structural_times = []
-        combined_times = []
+    min_times = []
+    max_times = []
+    structural_times = []
+    combined_times = []
     
-        for f in frequencies:
-            min_times.append(REVERBERATION_STANDARDS.get(purpose, {}).get("min", {}).get(f, None))
-            max_times.append(REVERBERATION_STANDARDS.get(purpose, {}).get("max", {}).get(f, None))
-            structural_times.append(structural_results['reverberation_times'].get(f, None))
-            if combined_results:
-                combined_times.append(combined_results['reverberation_times'].get(f, None))
-            else:
-                combined_times.append(None)
+    for f in frequencies:
+        min_times.append(REVERBERATION_STANDARDS.get(purpose, {}).get("min", {}).get(f, None))
+        max_times.append(REVERBERATION_STANDARDS.get(purpose, {}).get("max", {}).get(f, None))
+        structural_times.append(structural_results['reverberation_times'].get(f, None))
+        if combined_results:
+            combined_times.append(combined_results['reverberation_times'].get(f, None))
+        else:
+            combined_times.append(None)
     
-        rows = [["Частота (Гц)", "Мин. время", "Макс. время", "Исходное время (ОК)", "Итоговое время (с АК)"]]
-        for i, f in enumerate(frequencies):
-            rows.append([f, min_times[i], max_times[i], structural_times[i], combined_times[i]])
+    rows = [["Частота (Гц)", "Мин. время", "Макс. время", "Исходное время (ОК)", "Итоговое время (с АК)"]]
+    for i, f in enumerate(frequencies):
+        rows.append([f, min_times[i], max_times[i], structural_times[i], combined_times[i]])
     
-        df = pd.DataFrame(rows)
-        df.to_excel(writer, sheet_name="Графики", index=False, header=False)
+    df = pd.DataFrame(rows)
+     df.to_excel(writer, sheet_name="Графики", index=False, header=False)
 
