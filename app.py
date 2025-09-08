@@ -314,24 +314,24 @@ def main():
                 frequencies = [125, 250, 500, 1000, 2000, 4000]
                 
                 # Времена реверберации
-                min_times = [structural_results['min_reverberation'][f] for f in frequencies]  # нужно добавить в calculate_structural
-                max_times = [structural_results['max_reverberation'][f] for f in frequencies]
-                structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
-                combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
+                #min_times = [structural_results['min_reverberation'][f] for f in frequencies]  # нужно добавить в calculate_structural
+               # max_times = [structural_results['max_reverberation'][f] for f in frequencies]
+                #structural_times = [structural_results['reverberation_times'][f] for f in frequencies]
+               # combined_times = [combined_results['reverberation_times'][f] for f in frequencies] if combined_results else None
                 
-                plt.figure(figsize=(10,5))
-                plt.plot(frequencies, min_times, 'g--', marker='o', label="Минимальное время")
-                plt.plot(frequencies, max_times, 'g-.', marker='o', label="Максимальное время")
-                plt.plot(frequencies, structural_times, 'r-o', label="Исходное время (ОК)")
-                if combined_times:
-                    plt.plot(frequencies, combined_times, 'b-o', label="Итоговое время (с АК)")
+               # plt.figure(figsize=(10,5))
+               # plt.plot(frequencies, min_times, 'g--', marker='o', label="Минимальное время")
+               # plt.plot(frequencies, max_times, 'g-.', marker='o', label="Максимальное время")
+               # plt.plot(frequencies, structural_times, 'r-o', label="Исходное время (ОК)")
+               # if combined_times:
+               #     plt.plot(frequencies, combined_times, 'b-o', label="Итоговое время (с АК)")
                 
-                plt.xlabel("Частота (Гц)")
-                plt.ylabel("Время реверберации (с)")
-                plt.title("Время реверберации по частотам")
-                plt.grid(True)
-                plt.legend()
-                st.pyplot(plt)
+              #  plt.xlabel("Частота (Гц)")
+               # plt.ylabel("Время реверберации (с)")
+               # plt.title("Время реверберации по частотам")
+               # plt.grid(True)
+              #  plt.legend()
+             #   st.pyplot(plt)
 
                 
                 # Экспорт Excel
