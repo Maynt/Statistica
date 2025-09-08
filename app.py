@@ -534,22 +534,22 @@ def _display_calculation_results(results, title):
    # st.dataframe(comparison_df, use_container_width=True, hide_index=True)
     
     # Эффективность акустических материалов
-    avg_reduction = sum([
-        (structural_results['reverberation_times'][freq] - combined_results['reverberation_times'][freq]) / 
-        structural_results['reverberation_times'][freq] * 100 
-        for freq in frequencies
-    ]) / len(frequencies)
+ #   avg_reduction = sum([
+ #       (structural_results['reverberation_times'][freq] - combined_results['reverberation_times'][freq]) / 
+ #       structural_results['reverberation_times'][freq] * 100 
+  #      for freq in frequencies
+ #   ]) / len(frequencies)
     
-    if avg_reduction > 0:
-        st.success(f"✅ Среднее снижение времени реверберации: {avg_reduction:.1f}%")
-        if avg_reduction > 20:
-            st.info("🎯 Отличная эффективность акустических материалов!")
-        elif avg_reduction > 10:
-            st.info("👍 Хорошая эффективность акустических материалов")
-        else:
-            st.warning("⚠️ Низкая эффективность акустических материалов")
-    else:
-        st.warning("⚠️ Акустические материалы не показывают эффективности")
+  #  if avg_reduction > 0:
+   #     st.success(f"✅ Среднее снижение времени реверберации: {avg_reduction:.1f}%")
+   #     if avg_reduction > 20:
+  #          st.info("🎯 Отличная эффективность акустических материалов!")
+   #     elif avg_reduction > 10:
+   #         st.info("👍 Хорошая эффективность акустических материалов")
+   #     else:
+   #         st.warning("⚠️ Низкая эффективность акустических материалов")
+  #  else:
+    #    st.warning("⚠️ Акустические материалы не показывают эффективности")
 
 if __name__ == "__main__":
     main()
