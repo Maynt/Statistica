@@ -1,6 +1,5 @@
 import pandas as pd
 import io
-from data.reverberation_standarts import REVERBERATION_STANDARDS
 from models.room import Room
 
 def export_calculation_results_to_excel(
@@ -117,7 +116,8 @@ def _create_results_sheet(writer, results, sheet_name):
         """
         Создание листа с данными для построения графиков времени реверберации.
         """
-    
+        from data.reverberation_standarts import REVERBERATION_STANDARDS
+        
         frequencies = [125, 250, 500, 1000, 2000, 4000]
         purpose = room_data.get("purpose", "")
     
