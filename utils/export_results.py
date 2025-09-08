@@ -113,7 +113,7 @@ def _create_results_sheet(writer, results, sheet_name):
     df.to_excel(writer, sheet_name=sheet_name, index=False)
     
 def _create_chart_data_sheet(writer, room_data, structural_results, combined_results):
-        """
+            """
         Создание листа с данными для построения графиков времени реверберации.
         """
         from data.reverberation_standarts import REVERBERATION_STANDARDS
@@ -141,33 +141,4 @@ def _create_chart_data_sheet(writer, room_data, structural_results, combined_res
     
         df = pd.DataFrame(rows)
         df.to_excel(writer, sheet_name="Графики", index=False, header=False)
-#def _create_comparison_sheet(writer, structural, combined):
-    """
-    Создание листа с сравнением результатов.
-    
-    frequencies = [125, 250, 500, 1000, 2000, 4000]
-    rows = []
 
-    for freq in frequencies:
-        try:
-            s_time = structural.get('reverberation_times', {}).get(freq, None)
-            c_time = combined.get('reverberation_times', {}).get(freq, None)
-            if s_time is not None and c_time is not None:
-                diff = s_time - c_time
-                perc = (diff / s_time * 100) if s_time > 0 else 0
-            else:
-                diff = perc = None
-
-            rows.append({
-                'Частота (Гц)': freq,
-                'Время ОК (с)': s_time,
-                'Время с АК (с)': c_time,
-                'Разность (с)': diff,
-                'Снижение (%)': perc
-            })
-        except Exception:
-            continue
-
-    df = pd.DataFrame(rows)
-    df.to_excel(writer, sheet_name='Сравнение', index=False)
-    """
